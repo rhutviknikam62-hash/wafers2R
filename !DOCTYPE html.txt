@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Balaji Custom Flavor Maker</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+<h1>Balaji Custom Flavor Maker</h1>
+<p>Create your own unique chips flavour + home delivery!</p>
+</header>
+<section class="flavor-section">
+<h2>Select Your Flavour</h2>
+<select id="flavorSelect">
+<option value="Peri Peri">Peri Peri</option>
+<option value="Chocolate">Chocolate</option>
+<option value="Pani Puri">Pani Puri</option>
+<option value="Chat Masala">Chat Masala</option>
+<option value="Pizza">Pizza</option>
+<option value="Burger">Burger</option>
+<option value="Healthy Multigrain">Healthy Multigrain</option>
+<option value="Korean Spicy">Korean Spicy</option>
+<option value="Hot American Paprika">Hot American Paprika</option>
+<option value="Lemon Chilli">Lemon Chilli</option>
+<option value="Tomato Punch">Tomato Punch</option>
+</select>
+<button onclick="generateFlavor()">Generate AI Description</button>
+<p id="flavorDescription"></p>
+</section>
+<section class="packaging-section">
+<h2>Custom Packaging Preview</h2>
+<input type="color" id="packColor" onchange="changeColor()">
+<div id="packetPreview">YOUR CUSTOM PACKET</div>
+</section>
+<section class="cart-section">
+<h2>Add to Cart</h2>
+<p>Price: ₹60+ shipping</p>
+<button onclick="addToCart()">Add to Cart</button>
+<p id="cartStatus"></p>
+</section>
+<section class="delivery-section">
+<h2>Home Delivery Details</h2>
+<input type="text"
+id="name" placeholder="Full Name">
+<input type="text"
+id="address" placeholder="Delivery Address">
+<input type="text"
+id="phone" placeholder="Phone Number">
+<button onclick="placeOrder()">Place Order</button>
+<p id="orderStatus"></p>
+</section>
+<script src="script.js"></script>
+</body>
+</html>
