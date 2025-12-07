@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Balaji Custom Flavor Maker — E-Commerce Prototype with Custom Packaging</title>
+  <style>
+    body { font-family: 'Arial', sans-serif; margin: 0; padding: 0; text-align: center; background: #f6d365; }
+    .container { max-width: 950px; margin: 40px auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    h1 { color: #ff5e00; text-shadow: 2px 2px 5px #ffbc80; }
+    select, input, button { padding: 12px; margin: 10px 0; border-radius: 12px; border: 1px solid #ccc; font-size: 16px; }
+    select, input { width: 100%; background: #fff8e1; }
+    button.btn-primary { background: #ff7b00; color: white; cursor: pointer; font-weight: bold; border: none; }
+    #preview { margin-top: 20px; padding: 20px; border-radius: 15px; display: none; background: #ffecd2; }
+    .cart-item { display: flex; justify-content: space-between; margin: 10px 0; padding: 10px; border-radius: 15px; background: #ffe6cc; }
+    #cartList { margin-top: 15px; text-align: left; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Balaji Custom Flavor Maker</h1>
+    <div>
+      <label>Primary Flavor</label>
+      <select id="primaryFlavor"></select>
+    </div>
+    <div>
+      <label>Secondary Flavor</label>
+      <select id="secondaryFlavor"></select>
+    </div>
+    <div>
+      <label>Custom Packet Design (Text/Name)</label>
+      <input type="text" id="customPackage" placeholder="Write your packet name or style" />
+    </div>
+    <button onclick="generateFlavor()" class="btn-primary">Generate Flavor & Custom Package</button>
+
+    <div id="preview"></div>
+
+    <h2>Cart & Home Delivery</h2>
+    <div id="cartList">No items yet</div>
+    <div>Total: ₹<span id="totalPrice">0</span></div>
+    <button onclick="checkout()" class="btn-primary">Checkout & Confirm Home Delivery</button>
+  </div>
+
+  <script>
+    const FLAVORS = ['Chocolate','Peri Peri','Panipuri','Healthy','Chat Masala','Pizza','Burger','Korean','Hot American Paprika','Cheese','Mango','Tandoori','Schezwan','Sweet Corn','Green Chutney','Mint','Jalapeno','Herb & Garlic','Sour Cream','Barbecue','Tomato Basil','Spicy Thai','Masala Magic','Curry Delight','Butter Garlic','Caramel','Chili Cheese','Tangy Tomato','Lemon Pepper'];
+
+    const primary = document.getElementById('primaryFlavor');
+    const secondary = document.getElementById('secondaryFlavor');
+    FLAVORS.forEach(f=>{
+      const opt1 = document.createElement('option'); opt1.value=f; opt1.text=f; primary.add(opt1);
+      const opt2 = document.createElement('option'); opt2.value=f; opt2.text=f; secondary.add(opt2);
+    });
+
+    function generateFlavor(){
+      const f1 = primary.value;
+      const f2 = secondary.value;
+      const customText = document.getElementById('customPackage').value;
+      const name = (f1===f2)? f1 : `${f1} & ${f2} Fusion`;
+      const desc = generateAIFlavourDescription(f1,f2);
+      const preview = document.getElementById('preview');
+      preview.style.display='block';
+      preview.style.background = '#'+Math.floor(Math.random()*16777215).toString(16);
+      preview.innerHTML = `<h3>${name} Chips</h3><p>${desc}</p><p>Custom Packet: ${customText || 'Standard Packaging'}</p><p>Price: ₹60 + Shipping ₹20</p><button onclick='addToCart("${name}", "${customText || 'Standard'}")' class='btn-primary'>Add to Cart</button>`;
+    }
+
+    function generateAIFlavourDescription(f1,f2){
+      const templates = [
+        `A perfect fusion of ${f1} and ${f2} for a bold, tangy, and crunchy experience!`,
+        `Indulge in the taste of ${f1} combined with ${f2} — an explosion of flavors in every bite.`,
+        `${f1} meets ${f2} for a gourmet snack adventure — spicy, savory, and unforgettable.`,
+        `Experience the magic of ${f1} & ${f2} — modern snack vibes for every craving.`
+      ];
+      return templates[Math.floor(Math.random()*templates.length)];
+    }
+
+    function getCart(){ return JSON.parse(localStorage.getItem('balajiCart')||'[]'); }
+    function saveCart(c){ localStorage.setItem('balajiCart', JSON.stringify(c)); renderCart(); }
+    function addToCart(flavor, custom){
+      const cart = getCart();
+      cart.push({name: flavor, custom: custom, price: 60, shipping: 20});
+      saveCart(cart);
+      alert(flavor + ' added to cart for home delivery');
+    }
+
+    function renderCart(){
+      const cart = getCart();
+      const el = document.getElementById('cartList');
+      if(cart.length===0){ el.innerHTML='No items yet'; document.getElementById('totalPrice').textContent='0'; return; }
+      el.innerHTML='';
+      let total=0;
+      cart.forEach((item, i)=>{
+        total += item.price + item.shipping;
+        const div = document.createElement('div');
+        div.className='cart-item';
+        div.innerHTML=`<span>${item.name} (${item.custom}) - ₹${item.price}+₹${item.shipping}</span> <button onclick='removeFromCart(${i})'>Remove</button>`;
+        el.appendChild(div);
+      });
+      document.getElementById('totalPrice').textContent=total;
+    }
+
+    function removeFromCart(i){
+      const cart=getCart(); cart.splice(i,1); saveCart(cart);
+    }
+
+    function checkout(){
+      const cart = getCart();
+      if(cart.length===0){ alert('Cart is empty'); return; }
+      const total = cart.reduce((s,item)=>s+item.price+item.shipping,0);
+      alert('Order placed for HOME DELIVERY!\nTotal: ₹'+total+'\nThank you for shopping!');
+      localStorage.removeItem('balajiCart'); renderCart();
+    }
+
+    window.onload = renderCart;
+  </script>
+</body>
+</html>
